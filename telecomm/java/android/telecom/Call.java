@@ -431,6 +431,9 @@ public final class Call {
             if (can(capabilities, CAPABILITY_VOICE_PRIVACY)) {
                 builder.append(" CAPABILITY_VOICE_PRIVACY");
             }
+            if (can(capabilities, CAPABILITY_ADD_PARTICIPANT)) {
+                builder.append(" CAPABILITY_ADD_PARTICIPANT");
+            }
             builder.append("]");
             return builder.toString();
         }
