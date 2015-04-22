@@ -1910,6 +1910,16 @@ public class Camera {
         return camera.new Parameters();
     }
 
+    /** @hide
+     * Stop longshot. Available only in ZSL.
+     */
+    public final void stopLongshot()
+    {
+        native_stopLongshot();
+    }
+    private native final void native_stopLongshot();
+
+     /** @hide
     /**
      * Returns a copied {@link Parameters}; for shim use only.
      *

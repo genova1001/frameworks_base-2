@@ -440,6 +440,21 @@ void JNICameraContext::setCallbackMode(JNIEnv *env, bool installed, bool manualM
     }
 }
 
+static void android_hardware_Camera_stopLongshot(JNIEnv *env, jobject thiz)
+{
+    ALOGV("stopLongshot");
+    JNICameraContext* context;
+    status_t rc;
+    sp<Camera> camera = get_native_camera(env, thiz, &context);
+    if (camera == 0) return;
+
+    rc = camera->sendCommand(CAMERA_CMD_STOP_LONGSHOT, 0, 0);
+
+    if (rc != NO_ERROR) {
+       jniThrowException(env, "java/lang/RuntimeException", "enabling longshot mode failed");
+    }
+}
+
 void JNICameraContext::addCallbackBuffer(
         JNIEnv *env, jbyteArray cbb, int msgType)
 {
@@ -1040,6 +1055,12 @@ static const JNINativeMethod camMethods[] = {
   { "native_takePicture",
     "(I)V",
     (void *)android_hardware_Camera_takePicture },
+  { "native_setLongshot",
+    "(Z)V",
+     (void *)android_hardware_Camera_setLongshot },
+  { "native_stopLongshot",
+    "()V",
+     (void *)android_hardware_Camera_stopLongshot },
   { "native_setParameters",
     "(Ljava/lang/String;)V",
     (void *)android_hardware_Camera_setParameters },
