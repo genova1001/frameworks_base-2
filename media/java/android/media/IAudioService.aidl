@@ -165,4 +165,8 @@ interface IAudioService {
     oneway void unregisterRecordingCallback(in IRecordingConfigDispatcher rcdb);
 
     List<AudioRecordingConfiguration> getActiveRecordingConfigurations();
+    void handleHotwordInput(boolean listening);
+
+    String getCurrentHotwordInputPackageName();
+
 }
