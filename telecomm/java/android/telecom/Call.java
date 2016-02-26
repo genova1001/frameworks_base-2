@@ -707,7 +707,7 @@ public final class Call {
             sb.append(", caps: ");
             sb.append(capabilitiesToString(mCallCapabilities));
             sb.append(", props: ");
-            sb.append(propertiesToString(mCallProperties));
+            sb.append(mCallProperties);
             sb.append("]");
             return sb.toString();
         }
@@ -1221,6 +1221,48 @@ public final class Call {
                     break;
                 }
             }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().
+                append("Call [id: ").
+                append(mTelecomCallId).
+                append(", state: ").
+                append(stateToString(mState)).
+                append(", details: ").
+                append(mDetails).
+                append("]").toString();
+    }
+
+    /**
+     * @param state An integer value of a {@code STATE_*} constant.
+     * @return A string representation of the value.
+     */
+    private static String stateToString(int state) {
+        switch (state) {
+            case STATE_NEW:
+                return "NEW";
+            case STATE_RINGING:
+                return "RINGING";
+            case STATE_DIALING:
+                return "DIALING";
+            case STATE_ACTIVE:
+                return "ACTIVE";
+            case STATE_HOLDING:
+                return "HOLDING";
+            case STATE_DISCONNECTED:
+                return "DISCONNECTED";
+            case STATE_CONNECTING:
+                return "CONNECTING";
+            case STATE_DISCONNECTING:
+                return "DISCONNECTING";
+            case STATE_SELECT_PHONE_ACCOUNT:
+                return "SELECT_PHONE_ACCOUNT";
+            default:
+                Log.w(Call.class, "Unknown state %d", state);
+                return "UNKNOWN";
         }
     }
 
