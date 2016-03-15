@@ -10081,6 +10081,12 @@ public final class Settings {
          * @hide
          */
         public static final String MAX_NOTIFICATION_ENQUEUE_RATE = "max_notification_enqueue_rate";
+
+        /**
+         * Whether cell is enabled/disabled
+         * @hide
+         */
+        public static final String CELL_ON = "cell_on";
     }
 
     /**
