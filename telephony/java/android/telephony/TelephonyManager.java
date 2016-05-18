@@ -36,6 +36,7 @@ import android.os.ServiceManager;
 import android.os.SystemProperties;
 import android.telecom.PhoneAccount;
 import android.telecom.PhoneAccountHandle;
+import android.telephony.TelephonyHistogram;
 import android.util.Log;
 
 import com.android.internal.telecom.ITelecomService;
@@ -5459,5 +5460,25 @@ public class TelephonyManager {
             Log.e(TAG, "Error calling ITelephony#isVoicemailVibrationEnabled", e);
         }
         return false;
+    }
+    /*
+     * Get snapshot of Telephony histograms
+     * @return List of Telephony histograms
+     * Requires Permission:
+     *   {@link android.Manifest.permission#MODIFY_PHONE_STATE MODIFY_PHONE_STATE}
+     * Or the calling app has carrier privileges.
+     * @hide
+     */
+    @SystemApi
+    public List<TelephonyHistogram> getTelephonyHistograms() {
+        try {
+            ITelephony service = getITelephony();
+            if (service != null) {
+                return service.getTelephonyHistograms();
+            }
+        } catch (RemoteException e) {
+            Log.e(TAG, "Error calling ITelephony#getTelephonyHistograms", e);
+        }
+        return null;
     }
 }

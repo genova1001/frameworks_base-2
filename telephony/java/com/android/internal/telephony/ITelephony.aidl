@@ -28,8 +28,10 @@ import android.telephony.ModemActivityInfo;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.RadioAccessFamily;
 import android.telephony.ServiceState;
+import android.telephony.TelephonyHistogram;
 import com.android.internal.telephony.CellNetworkScanResult;
 import com.android.internal.telephony.OperatorInfo;
+
 import java.util.List;
 
 
@@ -1093,4 +1095,13 @@ interface ITelephony {
      * Returns a list of packages that have carrier privileges.
      */
     List<String> getPackagesWithCarrierPrivileges();
+
+    /**
+     * Get snapshot of Telephony histograms
+     * @return List of Telephony histograms
+     * Requires Permission:
+     *   {@link android.Manifest.permission#MODIFY_PHONE_STATE MODIFY_PHONE_STATE}
+     * Or the calling app has carrier privileges.
+     */
+    List<TelephonyHistogram> getTelephonyHistograms();
 }
