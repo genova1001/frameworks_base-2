@@ -686,14 +686,11 @@ public class CarrierConfigManager {
     public static final String KEY_MMS_USER_AGENT_STRING = "userAgent";
 
     /**
-     * If carriers require differentiate un-provisioned status: cold sim or out of credit sim
-     * a package name and activity name can be provided to launch a supported carrier application
-     * that check the sim provisioning status
-     * The first element is the package name and the second element is the activity name
-     * of the provisioning app
-     * example:
-     * <item>com.google.android.carrierPackageName</item>
-     * <item>com.google.android.carrierPackageName.CarrierActivityName</item>
+     * A list of component name of carrier signalling receivers which are interested in intent
+     * android.intent.action.CARRIER_SIGNAL_REDIRECTED.
+     * Example:
+     * <item>com.google.android.carrierPackageName/.CarrierSignalReceiverNameA</item>
+     * <item>com.google.android.carrierPackageName/.CarrierSignalReceiverNameB</item>
      * The ComponentName of the carrier activity that can setup the device and activate with the
      * network as part of the Setup Wizard flow.
      * @hide
