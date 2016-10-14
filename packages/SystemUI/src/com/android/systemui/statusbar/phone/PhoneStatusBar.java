@@ -209,6 +209,8 @@ import static com.android.systemui.statusbar.phone.BarTransitions.MODE_TRANSLUCE
 import static com.android.systemui.statusbar.phone.BarTransitions.MODE_TRANSPARENT;
 import static com.android.systemui.statusbar.phone.BarTransitions.MODE_WARNING;
 
+import com.android.internal.util.tesla.WeatherControllerImpl;
+
 public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         DragDownHelper.DragDownCallback, ActivityStarter, OnUnlockMethodChangedListener,
         HeadsUpManager.OnHeadsUpChangedListener {
@@ -325,6 +327,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     FingerprintUnlockController mFingerprintUnlockController;
     LightStatusBarController mLightStatusBarController;
     protected LockscreenWallpaper mLockscreenWallpaper;
+    WeatherControllerImpl mWeatherController;
 
     int mNaturalBarHeight = -1;
 
@@ -996,6 +999,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mHandler, this);
             createUserSwitcher();
         }
+        mWeatherController = new WeatherControllerImpl(mContext);
 
         // Set up the quick settings tile panel
         AutoReinflateContainer container = (AutoReinflateContainer) mStatusBarWindow.findViewById(
@@ -1033,6 +1037,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mBatteryViewManager.setBatteryController(mBatteryController);
         mHeader.setBatteryController(mBatteryController);
         mKeyguardStatusBar.setBatteryController(mBatteryController);
+        mHeader.setWeatherController(mWeatherController);
 
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         mBroadcastReceiver.onReceive(mContext,
