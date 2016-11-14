@@ -127,7 +127,7 @@ public class FontListParser {
             if (parser.getEventType() != XmlPullParser.START_TAG) continue;
             String tag = parser.getName();
             if (tag.equals("font")) {
-                fonts.add(readFont(parser, dirPath));
+                fonts.add(readFont(parser));
             } else {
                 skip(parser);
             }
@@ -139,7 +139,7 @@ public class FontListParser {
     private static final Pattern FILENAME_WHITESPACE_PATTERN =
             Pattern.compile("^[ \\n\\r\\t]+|[ \\n\\r\\t]+$");
 
-    private static Font readFont(XmlPullParser parser, String dirPath)
+    private static Font readFont(XmlPullParser parser)
             throws XmlPullParserException, IOException {
         String indexStr = parser.getAttributeValue(null, "index");
         int index = indexStr == null ? 0 : Integer.parseInt(indexStr);
@@ -160,7 +160,7 @@ public class FontListParser {
                 skip(parser);
             }
         }
-        String fullFilename = dirPath + File.separatorChar +
+        String fullFilename = "/system/fonts/" +
                 FILENAME_WHITESPACE_PATTERN.matcher(filename).replaceAll("");
         return new Font(fullFilename, index, axes, weight, isItalic);
     }
