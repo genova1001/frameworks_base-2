@@ -269,7 +269,7 @@ public final class Call {
         public static final int CAPABILITY_ADD_PARTICIPANT = 0x02000000;
 
         //******************************************************************************************
-        // Next CAPABILITY value: 0x03000000
+        // Next CAPABILITY value: 0x04000000
         //******************************************************************************************
 
         /**
@@ -424,9 +424,6 @@ public final class Call {
             }
             if (can(capabilities, CAPABILITY_CAN_PULL_CALL)) {
                 builder.append(" CAPABILITY_CAN_PULL_CALL");
-            }
-            if (can(capabilities, CAPABILITY_ADD_PARTICIPANT)) {
-                builder.append(" CAPABILITY_ADD_PARTICIPANT");
             }
             if (can(capabilities, CAPABILITY_VOICE_PRIVACY)) {
                 builder.append(" CAPABILITY_VOICE_PRIVACY");

@@ -38,7 +38,7 @@ LOCAL_STATIC_JAVA_LIBRARIES := \
     trail-drawing \
     rebound
 
-LOCAL_JAVA_LIBRARIES := telephony-common org.dirtyunicorns.utils
+LOCAL_JAVA_LIBRARIES := telephony-common org.dirtyunicorns.utils telephony-ext
 
 LOCAL_PACKAGE_NAME := SystemUI
 LOCAL_CERTIFICATE := platform

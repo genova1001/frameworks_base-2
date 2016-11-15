@@ -747,6 +747,9 @@ public class TelephonyManager {
      */
     public static final String VVM_TYPE_CVVM = "vvm_type_cvvm";
 
+    /** {@hide} */
+    public static final String EMR_DIAL_ACCOUNT = "emr_dial_account";
+
     //
     //
     // Device Info
@@ -1560,7 +1563,7 @@ public class TelephonyManager {
      *   {@link android.Manifest.permission#READ_PHONE_STATE READ_PHONE_STATE}
      */
     public int getDataNetworkType() {
-        return getDataNetworkType(getSubId());
+        return getDataNetworkType(getDefaultDataSubscriptionId());
     }
 
     /**
@@ -3659,6 +3662,13 @@ public class TelephonyManager {
     }
 
     /**
+     * Returns Default Data subscription.
+     */
+    private static int getDefaultDataSubscriptionId() {
+        return SubscriptionManager.getDefaultDataSubscriptionId();
+    }
+
+    /**
      * Returns Default phone.
      */
     private static int getDefaultPhone() {
@@ -4738,7 +4748,7 @@ public class TelephonyManager {
     /** @hide */
     @SystemApi
     public void setDataEnabled(boolean enable) {
-        setDataEnabled(SubscriptionManager.getDefaultDataSubscriptionId(), enable);
+        setDataEnabled(getDefaultDataSubscriptionId(), enable);
     }
 
     /** @hide */
@@ -4757,7 +4767,7 @@ public class TelephonyManager {
     /** @hide */
     @SystemApi
     public boolean getDataEnabled() {
-        return getDataEnabled(SubscriptionManager.getDefaultDataSubscriptionId());
+        return getDataEnabled(getDefaultDataSubscriptionId());
     }
 
     /** @hide */
@@ -4966,7 +4976,7 @@ public class TelephonyManager {
        } catch (NullPointerException ex) {
            return false;
        }
-   }
+    }
 
     /**
      * Returns the Status of video telephony (VT)
@@ -4995,6 +5005,37 @@ public class TelephonyManager {
            return false;
        }
    }
+
+    /**
+     * Returns the Status of VOWIFI calling
+     * using subId
+     * @hide
+     */
+    public boolean isVoWifiCallingAvailableForSubscriber(int subId) {
+       try {
+           return getITelephony().isVoWifiCallingAvailableForSubscriber(subId);
+       } catch (RemoteException ex) {
+           return false;
+       } catch (NullPointerException ex) {
+           return false;
+       }
+    }
+
+    /**
+     * Returns the Status of Video telephony wifi calling
+     * using subId
+     * @hide
+     */
+    public boolean isVideoTelephonyWifiCallingAvailableForSubscriber(int subId) {
+       try {
+           return getITelephony()
+                       .isVideoTelephonyWifiCallingAvailableForSubscriber(subId);
+       } catch (RemoteException ex) {
+           return false;
+       } catch (NullPointerException ex) {
+           return false;
+       }
+    }
 
    /**
     * Set TelephonyProperties.PROPERTY_ICC_OPERATOR_NUMERIC for the default phone.

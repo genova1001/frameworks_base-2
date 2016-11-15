@@ -50,9 +50,11 @@ import com.android.systemui.qs.QSTile.Host.Callback;
 import com.android.systemui.qs.customize.QSCustomizer;
 import com.android.systemui.qs.external.CustomTile;
 import com.android.systemui.settings.BrightnessController;
+import com.android.systemui.settings.SimSwitchController;
 import com.android.systemui.settings.ToggleSlider;
 import com.android.systemui.statusbar.phone.QSTileHost;
 import com.android.systemui.statusbar.policy.BrightnessMirrorController;
+import com.android.systemui.statusbar.policy.MobileSignalController;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.tuner.TunerService.Tunable;
 
@@ -68,6 +70,7 @@ public class QSPanel extends LinearLayout implements Tunable, Callback {
     protected final ArrayList<TileRecord> mRecords = new ArrayList<TileRecord>();
     protected final View mBrightnessView;
     protected final ImageView mBrightnessIcon;
+    protected View mSimSwitcherView = null;
     private final H mHandler = new H();
 
     private int mPanelPaddingBottom;
@@ -77,6 +80,7 @@ public class QSPanel extends LinearLayout implements Tunable, Callback {
 
     private Callback mCallback;
     private BrightnessController mBrightnessController;
+    private SimSwitchController mSimSwitchController;
     protected QSTileHost mHost;
 
     protected QSFooter mFooter;
@@ -98,6 +102,13 @@ public class QSPanel extends LinearLayout implements Tunable, Callback {
         mContext = context;
 
         setOrientation(VERTICAL);
+
+        if(MobileSignalController.isCarrierOneSupported()) {
+            mSimSwitcherView = LayoutInflater.from(context).inflate(
+                R.layout.sim_switcher, this, false);
+            addView(mSimSwitcherView);
+            mSimSwitchController = new SimSwitchController(getContext(), mSimSwitcherView, this);
+        }
 
         mBrightnessView = LayoutInflater.from(context).inflate(
                 R.layout.quick_settings_brightness_dialog, this, false);
