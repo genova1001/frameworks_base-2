@@ -24,7 +24,6 @@ import android.hardware.camera2.dispatch.BroadcastDispatcher;
 import android.hardware.camera2.dispatch.DuckTypingDispatcher;
 import android.hardware.camera2.dispatch.HandlerDispatcher;
 import android.hardware.camera2.dispatch.InvokeDispatcher;
-import android.hardware.camera2.params.OutputConfiguration;
 import android.hardware.camera2.utils.TaskDrainer;
 import android.hardware.camera2.utils.TaskSingleDrainer;
 import android.os.Handler;
@@ -154,12 +153,6 @@ public class CameraCaptureSessionImpl extends CameraCaptureSession
     @Override
     public void tearDown(Surface surface) throws CameraAccessException {
         mDeviceImpl.tearDown(surface);
-    }
-
-    @Override
-    public void finishDeferredConfiguration(
-            List<OutputConfiguration> deferredOutputConfigs) throws CameraAccessException {
-        mDeviceImpl.finishDeferredConfig(deferredOutputConfigs);
     }
 
     @Override

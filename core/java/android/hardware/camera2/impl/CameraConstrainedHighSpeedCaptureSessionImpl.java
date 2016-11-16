@@ -21,7 +21,6 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraConstrainedHighSpeedCaptureSession;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.params.OutputConfiguration;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.hardware.camera2.utils.SurfaceUtils;
 import android.os.Handler;
@@ -257,12 +256,6 @@ public class CameraConstrainedHighSpeedCaptureSessionImpl
         return mSessionImpl.isAborting();
     }
 
-    @Override
-    public void finishDeferredConfiguration(List<OutputConfiguration> deferredOutputConfigs)
-            throws CameraAccessException {
-        mSessionImpl.finishDeferredConfiguration(deferredOutputConfigs);
-    }
-
     private class WrapperCallback extends StateCallback {
         private final StateCallback mCallback;
 
@@ -270,32 +263,26 @@ public class CameraConstrainedHighSpeedCaptureSessionImpl
             mCallback = callback;
         }
 
-        @Override
         public void onConfigured(CameraCaptureSession session) {
             mCallback.onConfigured(CameraConstrainedHighSpeedCaptureSessionImpl.this);
         }
 
-        @Override
         public void onConfigureFailed(CameraCaptureSession session) {
             mCallback.onConfigureFailed(CameraConstrainedHighSpeedCaptureSessionImpl.this);
         }
 
-        @Override
         public void onReady(CameraCaptureSession session) {
             mCallback.onReady(CameraConstrainedHighSpeedCaptureSessionImpl.this);
         }
 
-        @Override
         public void onActive(CameraCaptureSession session) {
             mCallback.onActive(CameraConstrainedHighSpeedCaptureSessionImpl.this);
         }
 
-        @Override
         public void onClosed(CameraCaptureSession session) {
             mCallback.onClosed(CameraConstrainedHighSpeedCaptureSessionImpl.this);
         }
 
-        @Override
         public void onSurfacePrepared(CameraCaptureSession session, Surface surface) {
             mCallback.onSurfacePrepared(CameraConstrainedHighSpeedCaptureSessionImpl.this,
                     surface);
