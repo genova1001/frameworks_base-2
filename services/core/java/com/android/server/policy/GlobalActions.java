@@ -60,6 +60,7 @@ import android.text.TextUtils;
 import android.util.ArraySet;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -206,19 +207,44 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         awakenIfNecessary();
         mDialog = createDialog();
         prepareDialog();
+        WindowManager.LayoutParams attrs = mDialog.getWindow().getAttributes();
+        attrs.setTitle("GlobalActions");
 
-        // If we only have 1 item and it's a simple press action, just do this action.
-        if (mAdapter.getCount() == 1
-                && mAdapter.getItem(0) instanceof SinglePressAction
-                && !(mAdapter.getItem(0) instanceof LongPressAction)) {
-            ((SinglePressAction) mAdapter.getItem(0)).onPress();
-        } else {
-            WindowManager.LayoutParams attrs = mDialog.getWindow().getAttributes();
-            attrs.setTitle("GlobalActions");
-            mDialog.getWindow().setAttributes(attrs);
-            mDialog.show();
-            mDialog.getWindow().getDecorView().setSystemUiVisibility(View.STATUS_BAR_DISABLE_EXPAND);
+        boolean isPrimary = UserHandle.getCallingUserId() == UserHandle.USER_OWNER;
+        int powermenuAnimations = isPrimary ? getPowermenuAnimations() : 0;
+
+        switch (powermenuAnimations) {
+           case 0:
+              attrs.windowAnimations = R.style.GlobalActionsAnimationEnter;
+              attrs.gravity = Gravity.CENTER|Gravity.CENTER_HORIZONTAL;
+           break;
+           case 1:
+              attrs.windowAnimations = R.style.GlobalActionsAnimation;
+              attrs.gravity = Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL;
+           break;
+           case 2:
+              attrs.windowAnimations = R.style.GlobalActionsAnimationTop;
+              attrs.gravity = Gravity.TOP|Gravity.CENTER_HORIZONTAL;
+           break;
         }
+
+        mDialog.getWindow().setAttributes(attrs);
+        mDialog.getWindow().setDimAmount(setPowerRebootDialogDim());
+        mDialog.show();
+        mDialog.getWindow().getDecorView().setSystemUiVisibility(View.STATUS_BAR_DISABLE_EXPAND);
+    }
+
+    private int getPowermenuAnimations() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.POWER_MENU_ANIMATIONS, 0);
+    }
+
+    private float setPowerRebootDialogDim() {
+        int mPowerRebootDialogDim = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.POWER_REBOOT_DIALOG_DIM, 50);
+        double dDim = mPowerRebootDialogDim / 100.0;
+        float dim = (float) dDim;
+        return dim;
     }
 
     /**
@@ -873,7 +899,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private void refreshSilentMode() {
         if (!mHasVibrator) {
             final boolean silentModeOn =
-                    mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_NORMAL;
+                    mAudioManager.getRingerModeInternal() != AudioManager.RINGER_MODE_NORMAL;
             ((ToggleAction)mSilentModeAction).updateState(
                     silentModeOn ? ToggleAction.State.On : ToggleAction.State.Off);
         }
@@ -1272,7 +1298,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 LayoutInflater inflater) {
             View v = inflater.inflate(R.layout.global_actions_silent_mode, parent, false);
 
-            int selectedIndex = ringerModeToIndex(mAudioManager.getRingerMode());
+            int selectedIndex = ringerModeToIndex(mAudioManager.getRingerModeInternal());
             for (int i = 0; i < 3; i++) {
                 View itemView = v.findViewById(ITEM_IDS[i]);
                 itemView.setSelected(selectedIndex == i);
@@ -1305,7 +1331,7 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             if (!(v.getTag() instanceof Integer)) return;
 
             int index = (Integer) v.getTag();
-            mAudioManager.setRingerMode(indexToRingerMode(index));
+            mAudioManager.setRingerModeInternal(indexToRingerMode(index));
             mHandler.sendEmptyMessageDelayed(MESSAGE_DISMISS, DIALOG_DISMISS_DELAY);
         }
     }
