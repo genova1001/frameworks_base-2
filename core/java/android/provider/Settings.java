@@ -4270,6 +4270,12 @@ public final class Settings {
         public static final String LOCK_SCREEN_VISIBLE_NOTIFICATIONS = "lock_screen_visible_notifications";
 
         /**
+         * Statusbar Tesla logo
+         * @hide
+         */
+        public static final String STATUS_BAR_TESLA_LOGO = "status_bar_tesla_logo";
+
+        /**
          * custom carrier label. The value is
          * String.
          */
@@ -4291,6 +4297,18 @@ public final class Settings {
          * @hide
          */
         public static final String SHOW_ALARM_FULLSCREEN = "show_alarm_fullscreen";
+
+        /**
+         * volume answer
+         * @hide
+         */
+        public static final String ANSWER_VOLUME_BUTTON_BEHAVIOR_ANSWER = "call_volume_answer";
+
+        /**
+         * Whether to control brightness from status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_BRIGHTNESS_CONTROL = "status_bar_brightness_control";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -7404,6 +7422,11 @@ public final class Settings {
         public static final String LOCKSCREEN_TARGETS = "lockscreen_target_actions";
 
         /**
+         * Count of small QS tiles.
+         * @hide
+         */
+        public static final String QQS_COUNT = "sysui_qqs_count";
+
         /**
          * This are the settings to be backed up.
          *
