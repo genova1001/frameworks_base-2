@@ -739,7 +739,7 @@ const char16_t* ResStringPool::stringAt(size_t idx, size_t* u16len) const
                         ALOGW("CREATING STRING CACHE OF %zu bytes",
                                 static_cast<size_t>(mHeader->stringCount*sizeof(char16_t**)));
 #endif
-                        mCache = (char16_t**)calloc(mHeader->stringCount, sizeof(char16_t**));
+                        mCache = (char16_t**)calloc(mHeader->stringCount, sizeof(char16_t*));
                         if (mCache == NULL) {
                             ALOGW("No memory trying to allocate decode cache table of %d bytes\n",
                                     (int)(mHeader->stringCount*sizeof(char16_t**)));
@@ -3166,7 +3166,7 @@ struct ResTable::Package
 {
     Package(ResTable* _owner, const Header* _header, const ResTable_package* _package)
         : owner(_owner), header(_header), package(_package), typeIdOffset(0) {
-        if (dtohs(package->header.headerSize) == sizeof(package)) {
+        if (dtohs(package->header.headerSize) == sizeof(*package)) {
             // The package structure is the same size as the definition.
             // This means it contains the typeIdOffset field.
             typeIdOffset = package->typeIdOffset;
@@ -4320,6 +4320,7 @@ ssize_t ResTable::getBagLocked(uint32_t resID, const bag_entry** outBag,
         if (curOff > (dtohl(entry.type->header.size)-sizeof(ResTable_map))) {
             ALOGW("ResTable_map at %d is beyond type chunk data %d",
                  (int)curOff, dtohl(entry.type->header.size));
+            free(set);
             return BAD_TYPE;
         }
         map = (const ResTable_map*)(((const uint8_t*)entry.type) + curOff);
@@ -4332,6 +4333,7 @@ ssize_t ResTable::getBagLocked(uint32_t resID, const bag_entry** outBag,
             if (grp->dynamicRefTable.lookupResourceId(&newName) != NO_ERROR) {
                 ALOGE("Failed resolving ResTable_map name at %d with ident 0x%08x",
                         (int) curOff, (int) newName);
+                free(set);
                 return UNKNOWN_ERROR;
             }
         }
@@ -4352,10 +4354,12 @@ ssize_t ResTable::getBagLocked(uint32_t resID, const bag_entry** outBag,
             if (set->numAttrs >= set->availAttrs) {
                 // Need to alloc more memory...
                 const size_t newAvail = set->availAttrs+N;
+                void *oldSet = set;
                 set = (bag_set*)realloc(set,
                                         sizeof(bag_set)
                                         + sizeof(bag_entry)*newAvail);
                 if (set == NULL) {
+                    free(oldSet);
                     return NO_MEMORY;
                 }
                 set->availAttrs = newAvail;
@@ -4402,7 +4406,7 @@ ssize_t ResTable::getBagLocked(uint32_t resID, const bag_entry** outBag,
         pos++;
         const size_t size = dtohs(map->value.size);
         curOff += size + sizeof(*map)-sizeof(map->value);
-    };
+    }
 
     if (curEntry > set->numAttrs) {
         set->numAttrs = curEntry;
