@@ -3538,54 +3538,6 @@ public final class Settings {
                 "notification_light_pulse_vmail_led_off";
 
         /**
-         * Int value of the battery style 0 is default
-         *
-         * @hide
-         */
-        public static final String STATUSBAR_BATTERY_STYLE = "statusbar_battery_style";
-
-        /**
-         * int value if the battery percent should be shown never/always/expanded
-         *
-         * @hide
-         */
-        public static final String STATUSBAR_BATTERY_PERCENT = "statusbar_battery_percent";
-
-        /**
-         * boolean value if the battery percent should be shown inside the image
-         *
-         * @hide
-         */
-        public static final String STATUSBAR_BATTERY_PERCENT_INSIDE = "statusbar_battery_percent_inside";
-
-        /**
-         * boolean value if the charging flash should be displayed
-         *
-         * @hide
-         */
-        public static final String STATUSBAR_BATTERY_CHARGING_IMAGE = "statusbar_battery_charging_image";
-
-        /**
-         * int value of the color to use when charging
-         *
-         * @hide
-         */
-        public static final String STATUSBAR_BATTERY_CHARGING_COLOR = "statusbar_battery_charging_color";
-        /**
-         * enable color when charging
-         *
-         * @hide
-         */
-        public static final String STATUSBAR_BATTERY_CHARGING_COLOR_ENABLE = "statusbar_battery_charging_color_enable";
-
-        /**
-         * when to show battery - values are 0/none 1/always 2/expanded default is 1/always
-         *
-         * @hide
-         */
-        public static final String STATUSBAR_BATTERY_ENABLE = "statusbar_battery_enable";
-
-        /**
          * Whether the battery light should be enabled (if hardware supports it)
          * The value is boolean (1 or 0).
          * @hide
@@ -4285,6 +4237,12 @@ public final class Settings {
          */
         public static final String LOCK_SCREEN_WEATHER_CONDITION_ICON = "lock_screen_weather_condition_icon";
 
+        /**
+         * Whether to show the battery info on the lockscreen while charging
+         * @hide
+         */
+        public static final String LOCKSCREEN_BATTERY_INFO = "lockscreen_battery_info";
+ 
         /**
          * Whether to hide the weather panel when the notifications will reach the number of notifications
          * @hide
@@ -7509,6 +7467,57 @@ public final class Settings {
                 "camera_double_tap_power_gesture_disabled";
 
         /**
+         * Status bar battery %
+         * 0: Hide the battery percentage
+         * 1: Display the battery percentage inside the icon
+         * 2: Display the battery percentage next to the icon
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_BATTERY_PERCENT = "status_bar_show_battery_percent";
+
+        /**
+         * Display style of the status bar battery information
+         * 0: Display the battery an icon in portrait mode
+         * 2: Display the battery as a circle
+         * 4: Hide the battery status information
+         * 5: Display the battery an icon in landscape mode
+         * 6: Display the battery as plain text
+         * default: 0
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STYLE = "status_bar_battery_style";
+
+        /**
+         * Whether to sync the battery tile stile with the statusbar battery icon style
+         * @hide
+         */
+        public static final String STATUS_BAR_BATTERY_STYLE_TILE = "status_bar_battery_style_tile";
+
+        /**
+         * battery icon color while charging
+         *
+         * @hide
+         */
+        public static final String STATUS_BAR_CHARGE_COLOR = "status_bar_charge_color";
+
+        /**
+         * Whether to force percentage text out of the battery icon when charging
+         *
+         * @hide
+         */
+        public static final String FORCE_CHARGE_BATTERY_TEXT = "force_charge_battery_text";
+
+        /**
+         * Charging symbol near battery text percentage
+         * 0: no symbol
+         * 1: flash symbol
+         * 2: tilde symbol
+         * default: 0
+         * @hide
+         */
+        public static final String TEXT_CHARGING_SYMBOL = "text_charging_symbol";
+
+        /**
          * Whether the camera double twist gesture to flip between front and back mode should be
          * enabled.
          *
@@ -7565,12 +7574,6 @@ public final class Settings {
          * @hide
          */
         public static final String VR_DISPLAY_MODE = "vr_display_mode";
-
-        /**
-         * Whether the device should color invert notifications when doze if enabled.
-         * @hide
-         */
-        public static final String DOZE_NOTIFICATION_INVERT_ENABLED = "doze_notification_invert_enabled";
 
         /**
          * Lower the display persistence while the system is in VR mode.
@@ -7797,6 +7800,9 @@ public final class Settings {
             DOZE_PULSE_ON_PICK_UP,
             DOZE_PULSE_ON_DOUBLE_TAP,
             LOCKSCREEN_QUICK_UNLOCK_CONTROL,
+            STATUS_BAR_SHOW_BATTERY_PERCENT,
+            STATUS_BAR_BATTERY_STYLE,
+            STATUS_BAR_BATTERY_STYLE_TILE
         };
 
         /**
@@ -10250,6 +10256,24 @@ public final class Settings {
          * @hide
          */
         public static final String DATABASE_DOWNGRADE_REASON = "database_downgrade_reason";
+
+        /**
+         * Whether to sound when charger power is connected/disconnected
+         * @hide
+         */
+        public static final String POWER_NOTIFICATIONS_ENABLED = "power_notifications_enabled";
+
+        /**
+         * Whether to vibrate when charger power is connected/disconnected
+         * @hide
+         */
+        public static final String POWER_NOTIFICATIONS_VIBRATE = "power_notifications_vibrate";
+
+        /**
+         * URI for power notification sounds
+         * @hide
+         */
+        public static final String POWER_NOTIFICATIONS_RINGTONE = "power_notifications_ringtone";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
