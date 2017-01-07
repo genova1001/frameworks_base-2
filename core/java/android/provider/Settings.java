@@ -4222,10 +4222,39 @@ public final class Settings {
         public static final String LOCK_SCREEN_SHOW_WEATHER = "lock_screen_show_weather";
 
         /**
-         * Whether to show the weather location lock screen
+         * Status bar weather temperature
+         * 0: Hide the temperature
+         * 1: Display the temperature with scale
+         * 2: Display the temperature without scale
          * @hide
          */
-        public static final String LOCK_SCREEN_SHOW_WEATHER_LOCATION = "lock_screen_show_weather_location";
+        public static final String STATUS_BAR_SHOW_WEATHER_TEMP = "status_bar_show_weather_temp";
+
+        /**
+         * Style of Weather Temp
+         * 0 - Right (default)
+         * 1 - Left
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_TEMP_STYLE = "status_bar_weather_temp_style";
+
+        /**
+         * Statusbar weather color setting
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_COLOR = "status_bar_weather_color";
+
+        /**
+         * Statusbar weather font size setting
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_SIZE = "status_bar_weather_size";
+
+        /**
+         * Statusbar weather font style setting
+         * @hide
+         */
+        public static final String STATUS_BAR_WEATHER_FONT_STYLE = "status_bar_weather_font_style";
 
         /**
          * Weather condition icon on the lock screen
@@ -4242,6 +4271,12 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_BATTERY_INFO = "lockscreen_battery_info";
+
+        /**
+         * Whether to show the weather location lock screen
+         * @hide
+         */
+        public static final String LOCK_SCREEN_SHOW_WEATHER_LOCATION = "lock_screen_show_weather_location";
  
         /**
          * Whether to hide the weather panel when the notifications will reach the number of notifications
@@ -4580,6 +4615,12 @@ public final class Settings {
          * @hide
          */
         public static final String QS_DATE_TIME_CENTER = "qs_date_time_center";
+
+        /**
+         * Whether to hide Settings drawer
+         * @hide
+         */
+        public static final String SHOW_SETTINGS_DRAWER = "show_settings_drawer";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
