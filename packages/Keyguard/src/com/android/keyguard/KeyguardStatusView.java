@@ -94,6 +94,7 @@ public class KeyguardStatusView extends GridLayout implements
         @Override
         public void onStartedWakingUp() {
             setEnableMarquee(true);
+            refreshClockColors();
         }
 
         @Override
@@ -121,6 +122,7 @@ public class KeyguardStatusView extends GridLayout implements
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         mLockPatternUtils = new LockPatternUtils(getContext());
         mWeatherController = new WeatherControllerImpl(mContext);
+        refreshClockColors();
     }
 
     private void setEnableMarquee(boolean enabled) {
@@ -163,10 +165,36 @@ public class KeyguardStatusView extends GridLayout implements
         layoutParams.bottomMargin = getResources().getDimensionPixelSize(
                 R.dimen.bottom_text_spacing_digital);
         mClockView.setLayoutParams(layoutParams);
+        mClockView.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL)); 
         mDateView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(R.dimen.widget_label_font_size));
         mOwnerInfo.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                 getResources().getDimensionPixelSize(R.dimen.widget_label_font_size));
+    }
+
+    private int getLockClockFont() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCK_CLOCK_FONTS, 0);
+    }
+
+    private int getLockClockColor() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_CLOCK_COLOR, 0xFFFFFFFF);
+    }
+
+    private int getLockClockDateColor() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_CLOCK_DATE_COLOR, 0xFFFFFFFF);
+    }
+
+    private int getLockClockOwnerColor() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_OWNER_INFO_COLOR, 0xFFFFFFFF);
+    }
+
+    private int getLockClockAlarmColor() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_ALARM_COLOR, 0xFFFFFFFF);
     }
 
     public void refreshTime() {
@@ -184,6 +212,8 @@ public class KeyguardStatusView extends GridLayout implements
 
         refreshTime();
         refreshAlarmStatus(nextAlarm);
+        refreshLockFont();
+        refreshClockColors();
         updateWeatherSettings(false);
     }
 
@@ -276,6 +306,111 @@ public class KeyguardStatusView extends GridLayout implements
             updateWeatherSettings(false);
         }
     }
+
+    private void refreshLockFont() {
+        final Resources res = getContext().getResources();
+        boolean isPrimary = UserHandle.getCallingUserId() == UserHandle.USER_OWNER;
+        int lockClockFont = isPrimary ? getLockClockFont() : 0;
+
+        if (lockClockFont == 0) {
+            mClockView.setTypeface(Typeface.create("sans-serif", Typeface.NORMAL));
+        }
+        if (lockClockFont == 1) {
+            mClockView.setTypeface(Typeface.create("sans-serif", Typeface.ITALIC));
+        }
+        if (lockClockFont == 2) {
+            mClockView.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+        }
+        if (lockClockFont == 3) {
+            mClockView.setTypeface(Typeface.create("sans-serif", Typeface.BOLD_ITALIC));
+        }
+        if (lockClockFont == 4) {
+            mClockView.setTypeface(Typeface.create("sans-serif-light", Typeface.NORMAL));
+        }
+        if (lockClockFont == 5) {
+            mClockView.setTypeface(Typeface.create("sans-serif-light", Typeface.ITALIC));
+        }
+        if (lockClockFont == 6) {
+            mClockView.setTypeface(Typeface.create("sans-serif-thin", Typeface.NORMAL));
+        }
+        if (lockClockFont == 7) {
+            mClockView.setTypeface(Typeface.create("sans-serif-thin", Typeface.ITALIC));
+        }
+        if (lockClockFont == 8) {
+            mClockView.setTypeface(Typeface.create("sans-serif-condensed", Typeface.NORMAL));
+        }
+        if (lockClockFont == 9) {
+            mClockView.setTypeface(Typeface.create("sans-serif-condensed", Typeface.ITALIC));
+        }
+        if (lockClockFont == 10) {
+            mClockView.setTypeface(Typeface.create("sans-serif-condensed-light", Typeface.NORMAL));
+        }
+        if (lockClockFont == 11) {
+            mClockView.setTypeface(Typeface.create("sans-serif-condensed-light", Typeface.ITALIC));
+        }
+        if (lockClockFont == 12) {
+            mClockView.setTypeface(Typeface.create("sans-serif-condensed", Typeface.BOLD));
+        }
+        if (lockClockFont == 13) {
+            mClockView.setTypeface(Typeface.create("sans-serif-condensed", Typeface.BOLD_ITALIC));
+        }
+        if (lockClockFont == 14) {
+            mClockView.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
+        }
+        if (lockClockFont == 15) {
+            mClockView.setTypeface(Typeface.create("sans-serif-medium", Typeface.ITALIC));
+        }
+        if (lockClockFont == 16) {
+            mClockView.setTypeface(Typeface.create("sans-serif-black", Typeface.NORMAL));
+        }
+        if (lockClockFont == 17) {
+            mClockView.setTypeface(Typeface.create("sans-serif-black", Typeface.ITALIC));
+        }
+        if (lockClockFont == 18) {
+            mClockView.setTypeface(Typeface.create("cursive", Typeface.NORMAL));
+        }
+        if (lockClockFont == 19) {
+            mClockView.setTypeface(Typeface.create("cursive", Typeface.BOLD));
+        }
+        if (lockClockFont == 20) {
+            mClockView.setTypeface(Typeface.create("casual", Typeface.NORMAL));
+        }
+        if (lockClockFont == 21) {
+            mClockView.setTypeface(Typeface.create("serif", Typeface.NORMAL));
+        }
+        if (lockClockFont == 22) {
+            mClockView.setTypeface(Typeface.create("serif", Typeface.ITALIC));
+        }
+        if (lockClockFont == 23) {
+            mClockView.setTypeface(Typeface.create("serif", Typeface.BOLD));
+        }
+        if (lockClockFont == 24) {
+            mClockView.setTypeface(Typeface.create("serif", Typeface.BOLD_ITALIC));
+        }
+    }
+
+    private void refreshClockColors() {
+        final Resources res = getContext().getResources();
+        boolean isPrimary = UserHandle.getCallingUserId() == UserHandle.USER_OWNER;
+        int clockColor = isPrimary ? getLockClockColor() : 0xFFFFFFFF;
+        int clockDateColor = isPrimary ? getLockClockDateColor() : 0xFFFFFFFF;
+        int ownerInfoColor = isPrimary ? getLockClockOwnerColor() : 0xFFFFFFFF;
+        int alarmColor = isPrimary ? getLockClockAlarmColor() : 0xFFFFFFFF;
+
+        if (mClockView != null) {
+            mClockView.setTextColor(clockColor);
+        }
+        if (mDateView != null) {
+            mDateView.setTextColor(clockDateColor);
+        }
+        if (mOwnerInfo != null) {
+            mOwnerInfo.setTextColor(ownerInfoColor);
+        }
+        if (mAlarmStatusView != null) {
+            mAlarmStatusView.setTextColor(alarmColor);
+        }
+    }
+
 
     private void updateWeatherSettings(boolean forceHide) {
         final ContentResolver resolver = getContext().getContentResolver();
