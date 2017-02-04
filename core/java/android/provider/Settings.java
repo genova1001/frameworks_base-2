@@ -4243,6 +4243,36 @@ public final class Settings {
         public static final String VOLUME_LINK_NOTIFICATION = "volume_link_notification";
 
         /**
+         * Wether to show the ticker on the status bar
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_TICKER = "status_bar_show_ticker";
+
+        /**
+         * Color of the status bar notification text
+         * @hide
+         */
+        public static final String STATUS_BAR_TICKER_TEXT_COLOR = "status_bar_ticker_text_color";
+
+        /**
+         * Ticker Icon Color
+         * @hide
+         */
+        public static final String STATUS_BAR_TICKER_ICON_COLOR = "status_bar_ticker_icon_color";
+
+        /**
+         * Ticker Font Style
+         * @hide
+         */
+        public static final String STATUS_BAR_TICKER_FONT_STYLE = "status_bar_ticker_font_style";
+
+        /**
+         * Ticker Text Size
+         * @hide
+         */
+        public static final String STATUS_BAR_TICKER_FONT_SIZE = "status_bar_ticker_font_size";
+
+        /**
          * Whether to show the weather info on the lock screen
          * @hide
          */
@@ -4829,6 +4859,37 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_CLOCK_DATE_COLOR = "lockscreen_clock_date_color";
+
+        /**
+         * Whether to use the custom status bar header or not
+         * @hide
+         */
+        public static final String STATUS_BAR_CUSTOM_HEADER = "status_bar_custom_header";
+
+        /**
+         * Whether to apply a shadow on top of the header image
+         * value is the alpha value of the shadow image is 0 -> no shadow -> 255 black
+         * @hide
+         */
+        public static final String STATUS_BAR_CUSTOM_HEADER_SHADOW = "status_bar_custom_header_shadow";
+
+        /**
+         * header image package to use for daylight header - package name - null if default
+         * @hide
+         */
+        public static final String STATUS_BAR_DAYLIGHT_HEADER_PACK = "status_bar_daylight_header_pack";
+
+        /**
+         * Current active provider - available currently "static" "daylight"
+         * @hide
+         */
+        public static final String STATUS_BAR_CUSTOM_HEADER_PROVIDER = "status_bar_custom_header_provider";
+
+        /**
+         * Manual override picture to use
+         * @hide
+         */
+        public static final String STATUS_BAR_CUSTOM_HEADER_IMAGE = "status_bar_custom_header_image";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
