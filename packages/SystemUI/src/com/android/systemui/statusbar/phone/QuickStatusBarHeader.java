@@ -74,6 +74,7 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
     private ActivityStarter mActivityStarter;
     private NextAlarmController mNextAlarmController;
     private SettingsButton mSettingsButton;
+    private View mRunningServicesButton;
     protected View mSettingsContainer;
 
     private TextView mAlarmStatus;
@@ -113,6 +114,7 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
     private boolean isEdit;
     private boolean isExpandIndicator;
     private boolean isMultiUserSwitch;
+    private boolean isRunningServices;
     private boolean mDateTimeGroupCenter;
 
     // omni additions
@@ -155,6 +157,9 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
         mSettingsContainer = findViewById(R.id.settings_button_container);
         mSettingsButton.setOnClickListener(this);
 
+        mRunningServicesButton = findViewById(R.id.running_services_button);
+        mRunningServicesButton.setOnClickListener(this);
+
         mAlarmStatusCollapsed = findViewById(R.id.alarm_status_collapsed);
         mAlarmStatus = (TextView) findViewById(R.id.alarm_status);
         mAlarmStatus.setOnClickListener(this);
@@ -165,6 +170,7 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
         // RenderThread is doing more harm than good when touching the header (to expand quick
         // settings), so disable it for this view
         ((RippleDrawable) mSettingsButton.getBackground()).setForceSoftware(true);
+        ((RippleDrawable) mRunningServicesButton.getBackground()).setForceSoftware(true);
         ((RippleDrawable) mExpandIndicator.getBackground()).setForceSoftware(true);
 
         mBackgroundImage = (ImageView) findViewById(R.id.background_image);
@@ -233,7 +239,7 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
 
     private void updateDateTimeCenter() {
         mDateTimeGroupCenter = isDateTimeGroupCenter();
-	if (mDateTimeGroupCenter && (!(isSettingsIcon || isSettingsExpanded) || !isEdit || !isMultiUserSwitch || !isExpandIndicator)) {
+	if (mDateTimeGroupCenter && (!(isSettingsIcon || isSettingsExpanded) || !isEdit || !isMultiUserSwitch || !isExpandIndicator || !isRunningServices)) {
             mDateTimeAlarmGroup.setVisibility(View.GONE);
             mDateTimeAlarmCenterGroup.setVisibility(View.VISIBLE);
         } else {
@@ -323,6 +329,7 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
     protected void updateVisibilities() {
         updateAlarmVisibilities();
         updateDateTimePosition();
+
         mEmergencyOnly.setVisibility(mExpanded && mShowEmergencyCallsOnly
                 ? View.VISIBLE : View.INVISIBLE);
         final boolean isDemo = UserManager.isDeviceInDemoMode(mContext);
@@ -341,6 +348,8 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
         isMultiUserSwitch = isMultiUserSwitchEnabled();
         mMultiUserSwitch.setVisibility(isMultiUserSwitch ? View.VISIBLE : View.GONE);
         mMultiUserAvatar.setVisibility(isMultiUserSwitch ? View.VISIBLE : View.GONE);
+        isRunningServices = isRunningServicesEnabled();
+        mRunningServicesButton.setVisibility(isRunningServices ? View.VISIBLE : View.GONE);
     }
 
     private void updateDateTimePosition() {
@@ -413,6 +422,11 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
             startDateActivity();
         } else if (v == mDateTimeGroup) {
             startClockActivity();
+        } else if (v == mRunningServicesButton) {
+            MetricsLogger.action(mContext,
+                    mExpanded ? MetricsProto.MetricsEvent.ACTION_QS_EXPANDED_SETTINGS_LAUNCH
+                            : MetricsProto.MetricsEvent.ACTION_QS_COLLAPSED_SETTINGS_LAUNCH);
+            startRunningServicesActivity();
         }
     }
 
@@ -432,6 +446,13 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
     private void startSettingsActivity() {
         mActivityStarter.startActivity(new Intent(android.provider.Settings.ACTION_SETTINGS),
                 true /* dismissShade */);
+    }
+
+    private void startRunningServicesActivity() {
+        Intent intent = new Intent();
+        intent.setClassName("com.android.settings",
+                "com.android.settings.Settings$DevRunningServicesActivity");
+        mActivityStarter.startActivity(intent, true /* dismissShade */);
     }
 
     @Override
@@ -488,6 +509,11 @@ public class QuickStatusBarHeader extends BaseStatusBarHeader implements
     public boolean isExpandIndicatorEnabled() {
         return Settings.System.getInt(mContext.getContentResolver(),
             Settings.System.QS_EXPAND_INDICATOR_TOGGLE, 1) == 1;
+    }
+
+    public boolean isRunningServicesEnabled() {
+        return Settings.System.getInt(mContext.getContentResolver(),
+            Settings.System.QS_RUNNING_SERVICES_TOGGLE, 0) == 1;
     }
 
     public boolean isMultiUserSwitchEnabled() {

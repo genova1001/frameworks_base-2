@@ -24,6 +24,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Switch;
@@ -59,6 +60,21 @@ public class PowerNotificationControlsFragment extends Fragment {
                 ? getString(R.string.switch_bar_on)
                 : getString(R.string.switch_bar_off));
 
+        switchBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean newState = !isEnabled();
+                MetricsLogger.action(getContext(),
+                        MetricsEvent.ACTION_TUNER_POWER_NOTIFICATION_CONTROLS, newState);
+                Settings.Secure.putInt(getContext().getContentResolver(),
+                        KEY_SHOW_PNC, newState ? 1 : 0);
+                switchWidget.setChecked(newState);
+                switchText.setText(newState
+                        ? getString(R.string.switch_bar_on)
+                        : getString(R.string.switch_bar_off));
+            }
+        });
+
         switchWidget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,6 +89,17 @@ public class PowerNotificationControlsFragment extends Fragment {
                         : getString(R.string.switch_bar_off));
             }
         });
+
+        getActivity().getActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            getActivity().onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
