@@ -4208,6 +4208,12 @@ public final class Settings {
         public static final String POWER_REBOOT_DIALOG_DIM = "power_reboot_dialog_dim";
 
         /**
+         * Quick Settings number of columns
+         * @hide
+         */
+        public static final String QS_LAYOUT_COLUMNS = "qs_layout_columns";
+
+        /**
          * Number of rows used for the Quick Settings (portrait)
          *
          * @hide
@@ -4215,25 +4221,11 @@ public final class Settings {
         public static final String QS_ROWS_PORTRAIT = "qs_rows_portrait";
 
         /**
-         * Number of columns used for the Quick Settings (portrait)
-         *
-         * @hide
-         */
-        public static final String QS_COLUMNS_PORTRAIT = "qs_columns_portrait";
-
-        /**
          * Number of rows used for the Quick Settings (landscape)
          *
          * @hide
          */
         public static final String QS_ROWS_LANDSCAPE = "qs_rows_landscape";
-
-        /**
-         * Number of columns used for the Quick Settings (landscape)
-         *
-         * @hide
-         */
-        public static final String QS_COLUMNS_LANDSCAPE = "qs_columns_landscape";
 
         /**
          * Boolean value whether to link ringtone and notification volume
@@ -4920,6 +4912,11 @@ public final class Settings {
          * @hide
          */
         public static final String KEYGUARD_SHOW_CLOCK = "keyguard_show_clock";
+
+        /**
+         * @hide
+         */
+        public static final String QS_QUICKBAR_SCROLL_ENABLED = "qs_quickbar_scroll_enabled";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -6490,6 +6487,13 @@ public final class Settings {
          */
         @Deprecated
         public static final String LOCK_PATTERN_VISIBLE = "lock_pattern_visible_pattern";
+
+        /**
+         * Disable expanding quick settings on secure lock screens
+         *
+         * @hide
+         */
+        public static final String LOCK_QS_DISABLED = "lockscreen_qs_disabled";
 
         /**
          * Whether lock pattern will vibrate as user enters (0 = false, 1 =
