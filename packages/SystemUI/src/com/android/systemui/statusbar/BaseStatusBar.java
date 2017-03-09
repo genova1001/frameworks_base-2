@@ -120,6 +120,8 @@ import com.android.systemui.assist.AssistManager;
 import com.android.systemui.chaos.lab.gestureanywhere.GestureAnywhereView;
 import com.android.systemui.navigation.Navigator;
 import com.android.systemui.recents.Recents;
+import com.android.systemui.slimrecent.RecentController;
+import com.android.systemui.recents.RecentsActivity;
 import com.android.systemui.statusbar.NotificationData.Entry;
 import com.android.systemui.statusbar.NotificationGuts.OnGutsClosedListener;
 import com.android.systemui.statusbar.appcirclesidebar.AppCircleSidebar;
@@ -133,9 +135,11 @@ import com.android.systemui.statusbar.policy.RemoteInputView;
 import com.android.systemui.statusbar.stack.NotificationStackScrollLayout;
 import com.android.systemui.statusbar.stack.StackStateAnimator;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -193,7 +197,7 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected H mHandler = createHandler();
 
     // all notifications
-    protected NotificationData mNotificationData;
+    public static NotificationData mNotificationData;
     protected NotificationStackScrollLayout mStackScroller;
 
     protected NotificationGroupManager mGroupManager = new NotificationGroupManager();
@@ -216,6 +220,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected AccessibilityManager mAccessibilityManager;
 
     protected boolean mDeviceInteractive;
+
+    protected RecentController mSlimRecents;
 
     protected boolean mVisible;
     protected ArraySet<Entry> mHeadsUpEntriesToRemoveOnSwitch = new ArraySet<>();
@@ -303,6 +309,8 @@ public abstract class BaseStatusBar extends SystemUI implements
     protected AssistManager mAssistManager;
 
     protected boolean mVrMode;
+    
+    private static final HashMap<String, Field> fieldCache = new HashMap<String, Field>();
 
     private Set<String> mNonBlockablePkgs;
 
@@ -356,7 +364,38 @@ public abstract class BaseStatusBar extends SystemUI implements
 
             updateLockscreenNotificationSetting();
         }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            super.onChange(selfChange, uri);
+
+            if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.USE_SLIM_RECENTS))) {
+                        updateRecents();
+            }
+        }
+
     };
+
+    protected void rebuildRecentsScreen() {
+        if (mSlimRecents != null) {
+            mSlimRecents.rebuildRecentsScreen();
+        }
+    }
+
+    protected void updateRecents() {
+        boolean slimRecents = Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.USE_SLIM_RECENTS, 0, UserHandle.USER_CURRENT) == 1;
+
+        if (slimRecents) {
+            mSlimRecents = new RecentController(mContext, mLayoutDirection);
+            mRecents = null;
+            rebuildRecentsScreen();
+        } else {
+            mRecents = getComponent(Recents.class);
+            mSlimRecents = null;
+        }
+    }
 
     private final ContentObserver mLockscreenSettingsObserver = new ContentObserver(mHandler) {
         @Override
@@ -786,7 +825,9 @@ public abstract class BaseStatusBar extends SystemUI implements
         mBarService = IStatusBarService.Stub.asInterface(
                 ServiceManager.getService(Context.STATUS_BAR_SERVICE));
 
-        mRecents = getComponent(Recents.class);
+        mContext.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor(Settings.System.USE_SLIM_RECENTS), false,
+                        mSettingsObserver, UserHandle.USER_ALL);
 
         final Configuration currentConfig = mContext.getResources().getConfiguration();
         mLocale = currentConfig.locale;
@@ -797,6 +838,8 @@ public abstract class BaseStatusBar extends SystemUI implements
         mUserManager = (UserManager) mContext.getSystemService(Context.USER_SERVICE);
         mKeyguardManager = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
         mLockPatternUtils = new LockPatternUtils(mContext);
+
+        updateRecents();
 
         // Connect in to the status bar manager service
         mCommandQueue = new CommandQueue(this);
@@ -1401,6 +1444,7 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     @Override
     public void toggleRecentApps() {
+        RecentsActivity.startBlurTask();
         toggleRecents();
     }
 
@@ -1498,6 +1542,8 @@ public abstract class BaseStatusBar extends SystemUI implements
 
     protected abstract View getStatusBarView();
 
+    /*this is not needed with DUI navbar because it's not set anymore in PhoneStatusBar and it preloads recents 
+    if the button has Recent action (SmartButtonView) with the ActionHandler. But i'm keeping it if anyone using stock navbar*/
     protected View.OnTouchListener mRecentsPreloadOnTouchListener = new View.OnTouchListener() {
         // additional optimization when we have software system buttons - start loading the recent
         // tasks on touch down
@@ -1553,6 +1599,8 @@ public abstract class BaseStatusBar extends SystemUI implements
         if (isOmniSwitchEnabled()) {
             Intent showIntent = new Intent(TeslaUtils.ACTION_HIDE_OVERLAY);
             mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
+        } else if (mSlimRecents != null) {
+            mSlimRecents.hideRecents(triggeredFromHomeKey);
         } else if (mRecents != null) {
             mRecents.hideRecents(triggeredFromAltTab, triggeredFromHomeKey);
         }
@@ -1562,6 +1610,9 @@ public abstract class BaseStatusBar extends SystemUI implements
         if (isOmniSwitchEnabled()) {
             Intent showIntent = new Intent(TeslaUtils.ACTION_TOGGLE_OVERLAY);
             mContext.sendBroadcastAsUser(showIntent, UserHandle.CURRENT);
+        } else if (mSlimRecents != null) {
+            sendCloseSystemWindows(SYSTEM_DIALOG_REASON_RECENT_APPS);
+            mSlimRecents.toggleRecents(mDisplay, mLayoutDirection, getStatusBarView());
         } else if (mRecents != null) {
             mRecents.toggleRecents(mDisplay);
         }
@@ -1572,6 +1623,8 @@ public abstract class BaseStatusBar extends SystemUI implements
             if (mRecents != null) {
                 mRecents.showNextAffiliatedTask();
             }
+        } else if (mSlimRecents != null) {
+            mSlimRecents.preloadRecentTasksList();
         } else if (mRecents != null) {
             mRecents.preloadRecents();
         }
@@ -1590,6 +1643,8 @@ public abstract class BaseStatusBar extends SystemUI implements
             if (mRecents != null) {
                 mRecents.showNextAffiliatedTask();
             }
+        } else if (mSlimRecents != null) {
+            mSlimRecents.cancelPreloadingRecentTasksList();
         } else if (mRecents != null) {
             mRecents.cancelPreloadingRecents();
         }
@@ -1716,6 +1771,78 @@ public abstract class BaseStatusBar extends SystemUI implements
                     notification.getUserId());
         } catch (android.os.RemoteException ex) {
             // oh well
+        }
+    }
+    
+    public static void updatePreferences() {
+
+        if (mNotificationData == null)
+            return;
+
+        for (Entry entry : mNotificationData.getActiveNotifications()) {
+            NotificationBackgroundView mBackgroundNormal = (NotificationBackgroundView) getObjectField(entry.row, "mBackgroundNormal");
+            NotificationBackgroundView mBackgroundDimmed = (NotificationBackgroundView) getObjectField(entry.row, "mBackgroundDimmed");
+
+            mBackgroundNormal.postInvalidate();
+            mBackgroundDimmed.postInvalidate();
+        }
+    }
+
+
+    public static Object getObjectField(Object obj, String fieldName) {
+        try {
+            return findField(obj.getClass(), fieldName).get(obj);
+        } catch (IllegalAccessException e) {
+            throw new IllegalAccessError(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw e;
+        }
+    }
+
+
+    /**
+     * Look up a field in a class and set it to accessible. The result is cached.
+     * If the field was not found, a {@link NoSuchFieldError} will be thrown.
+     */
+    public static Field findField(Class<?> clazz, String fieldName) {
+        StringBuilder sb = new StringBuilder(clazz.getName());
+        sb.append('#');
+        sb.append(fieldName);
+        String fullFieldName = sb.toString();
+
+        if (fieldCache.containsKey(fullFieldName)) {
+            Field field = fieldCache.get(fullFieldName);
+            if (field == null)
+                throw new NoSuchFieldError(fullFieldName);
+            return field;
+        }
+
+        try {
+            Field field = findFieldRecursiveImpl(clazz, fieldName);
+            field.setAccessible(true);
+            fieldCache.put(fullFieldName, field);
+            return field;
+        } catch (NoSuchFieldException e) {
+            fieldCache.put(fullFieldName, null);
+            throw new NoSuchFieldError(fullFieldName);
+        }
+    }
+
+    private static Field findFieldRecursiveImpl(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+        try {
+            return clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            while (true) {
+                clazz = clazz.getSuperclass();
+                if (clazz == null || clazz.equals(Object.class))
+                    break;
+
+                try {
+                    return clazz.getDeclaredField(fieldName);
+                } catch (NoSuchFieldException ignored) {
+                }
+            }
+            throw e;
         }
     }
 
