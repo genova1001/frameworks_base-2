@@ -5017,19 +5017,19 @@ public final class Settings {
          *
          * @hide
          */
-        //public static final String RECENT_CARD_BG_COLOR = "recent_card_bg_color";
-
-        /**
-         * Recent card text color
-         *
-         * @hide
-         */
-        //public static final String RECENT_CARD_TEXT_COLOR = "recent_card_text_color";
+        public static final String RECENT_CARD_BG_COLOR = "recent_card_bg_color";
 
         /**
          * @hide
          */
         public static final String OMNIJAWS_WEATHER_ICON_PACK = "omnijaws_weather_icon_pack";
+
+        /**
+         * Toast icon
+         *
+         * @hide
+         */
+        public static final String TOAST_ICON = "toast_icon";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -7697,12 +7697,6 @@ public final class Settings {
         public static final String WAKE_GESTURE_ENABLED = "wake_gesture_enabled";
 
         /**
-         * Enable single click to turn WiFi on or off.
-         * @hide
-         */
-        public static final String QS_WIFI_EASY_TOGGLE = "qs_wifi_easy_toggle";
-
-        /**
          * Whether the device should doze if configured.
          * @hide
          */
@@ -8212,10 +8206,10 @@ public final class Settings {
         public static final String ADB_PORT = "adb_port";
 
         /**
-         * Whether to use one tap tile action to enable or disable data 
+         * Whether to use one tap QS tile action to enable or disable mobile data, wifi, and bluetooth 
          * @hide
          */
-        public static final String QS_DATA_ADVANCED = "qs_data_advanced";
+        public static final String QS_EASY_TOGGLE = "qs_easy_toggle";
 
         /**
          * Specifies whether the web action API is enabled.
@@ -8241,6 +8235,12 @@ public final class Settings {
          * @hide
          */
         public static final String QQS_COUNT = "sysui_qqs_count";
+
+        /**
+         * One Handed mode toggle
+         * @hide
+         */
+        public static final String ONE_HANDED_MODE_UI = "one_handed_mode_ui";
 
         /**
          * This are the settings to be backed up.
@@ -10115,6 +10115,8 @@ public final class Settings {
          * @see com.android.server.AlarmManagerService.Constants
          */
         public static final String ALARM_MANAGER_CONSTANTS = "alarm_manager_constants";
+
+        public static final String SINGLE_HAND_MODE = "single_hand_mode";
 
         /**
          * Job scheduler specific settings.
